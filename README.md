@@ -11,10 +11,12 @@ The application
 
 3. Find all vehicles within a given radius of any vehicle
 
+To specify contact points use the contactPoints command line parameter e.g. '-DcontactPoints=192.168.25.100,192.168.25.101'
+The contact points can take mulitple points in the IP,IP,IP (no spaces).
  
 To create the schema, run the following
 
-	mvn clean compile exec:java -Dexec.mainClass="com.datastax.demo.SchemaSetup"
+	mvn clean compile exec:java -Dexec.mainClass="com.datastax.demo.SchemaSetup" -DcontactPoints=localhost
 	
 To create the solr core, run 
 
@@ -22,7 +24,11 @@ To create the solr core, run
 	
 To continuously update the locations of the vehicles run 
 	
-	mvn clean compile exec:java -Dexec.mainClass="com.datastax.taxi.Main"
+	mvn clean compile exec:java -Dexec.mainClass="com.datastax.taxi.Main" -DcontactPoints=localhost
+	
+To start the web server, in another terminal run 
+
+	mvn jetty:run
 	
 To find all movements of a vehicle use http://localhost:8080/datastax-taxi-app/rest/getmovements/{vehicle}/{date} e.g.
 
@@ -30,7 +36,7 @@ To find all movements of a vehicle use http://localhost:8080/datastax-taxi-app/r
 
 Or
 
-	 select * from vehicle where vehicle = '1' and day='20160112';
+	select * from vehicle where vehicle = '1' and day='20160112';
 
 To find all vehicle movement, use the rest command http://localhost:8080/datastax-taxi-app/rest/getvehicles/{tile} e.g.
 
