@@ -1,4 +1,4 @@
-Transaction Search Demo
+Vehicle Tracking App
 ========================
 
 This demo traces moving vehicles as they pass through geohash tiles. It also keeps track of a vehicle movements on a day to day basis. Similar to a vessel tracking or taxi application.  
