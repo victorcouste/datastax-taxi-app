@@ -24,23 +24,30 @@ To continuously update the locations of the vehicles run
 	
 	mvn clean compile exec:java -Dexec.mainClass="com.datastax.taxi.Main"
 	
-To find all movements of a vehicle 
+To find all movements of a vehicle use http://localhost:8080/datastax-taxi-app/rest/getmovements/{vehicle}/{date} e.g.
 
 	http://localhost:8080/datastax-taxi-app/rest/getmovements/1/20160112
 
+Or
 
-To find all vehicle movement, use the rest command
+	 select * from vehicle where vehicle = '1' and day='20160112';
+
+To find all vehicle movement, use the rest command http://localhost:8080/datastax-taxi-app/rest/getvehicles/{tile} e.g.
 
 	http://localhost:8080/datastax-taxi-app/rest/getvehicles/gcrf
 
 or 
 
-	CQL - select * from current_location where solr_query = '{"q": "tile1:gcrf"}';
+	CQL - select * from current_location where solr_query = '{"q": "tile1:gcrf"}' limit 1000;
 
 
-To find all vehicles within a certain distance of a latitude and longitude. 
+To find all vehicles within a certain distance of a latitude and longitude, http://localhost:8080/datastax-taxi-app/rest/search/{lat}/{long}/{distance}
 
 	http://localhost:8080/datastax-taxi-app/rest/search/52.53956077140064/-0.20225833920426117/5
+	
+Or
+
+	select * from current_location where solr_query = '{"q": "*:*", "fq": "{!geofilt sfield=lat_long pt=52.53956077140064,-0.20225833920426117 d=5}"}' limit 1000;
  	
 To remove the tables and the schema, run the following.
 
