@@ -58,5 +58,15 @@ public class TaxiWS {
 		return Response.status(201).entity(result).build();
 	}
 
+    @GET
+    @Path("/gettiles")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTiles() {
+
+        List<String> result = service.getTiles();
+
+        return Response.status(201).entity(result).build();
+    }
+
 	
 }

@@ -31,13 +31,17 @@ public class VehicleDao {
 	private static String keyspaceName = "datastax_taxi_app";
 	private static String vehicleTable = keyspaceName + ".vehicle";
 	private static String currentLocationTable = keyspaceName + ".current_location";
+    private static String tilesTable = keyspaceName + ".tiles";
 
-	private static final String INSERT_INTO_VEHICLE = "Insert into " + vehicleTable + " (vehicle, day, date, lat_long, tile2) values (?,?,?,?,?);";
+
+    private static final String INSERT_INTO_VEHICLE = "Insert into " + vehicleTable + " (vehicle, day, date, lat_long, tile2) values (?,?,?,?,?);";
 	private static final String INSERT_INTO_CURRENTLOCATION = "Insert into " + currentLocationTable + "(vehicle, tile1, tile2, lat_long, date) values (?,?,?,?,?)" ;
-	
-	private static final String QUERY_BY_VEHICLE = "select * from " + vehicleTable + " where vehicle = ? and day = ?";
-	
-	private PreparedStatement insertVehicle;
+    private static final String INSERT_INTO_TILES = "Insert into " + tilesTable + "(tile1) values (?)" ;
+
+    private static final String QUERY_BY_VEHICLE = "select * from " + vehicleTable + " where vehicle = ? and day = ?";
+
+    private PreparedStatement insertTile;
+    private PreparedStatement insertVehicle;
 	private PreparedStatement insertCurrentLocation;
 	private PreparedStatement queryVehicle;
 	
@@ -53,8 +57,9 @@ public class VehicleDao {
 
 		this.insertVehicle = session.prepare(INSERT_INTO_VEHICLE);
 		this.insertCurrentLocation = session.prepare(INSERT_INTO_CURRENTLOCATION);
-		
-		this.queryVehicle = session.prepare(QUERY_BY_VEHICLE);
+        this.insertTile = session.prepare(INSERT_INTO_TILES);
+
+        this.queryVehicle = session.prepare(QUERY_BY_VEHICLE);
 	}
 	
 	public void insertVehicleLocation(Map<String, LatLong> newLocations){
@@ -69,14 +74,15 @@ public class VehicleDao {
 			String tile1 = GeoHash.encodeHash(entry.getValue(), 4);
 			String tile2 = GeoHash.encodeHash(entry.getValue(), 7);
 			
-			
-			
 			wrapper.addStatement(insertVehicle.bind(entry.getKey(), dateFormatter.format(date), date, 
 					entry.getValue().getLat()+","+entry.getValue().getLon(), tile2));
 			
 			wrapper.addStatement(insertCurrentLocation.bind(entry.getKey(), tile1, tile2, 
 					entry.getValue().getLat()+","+entry.getValue().getLon(), new Date()));
-		}
+
+            wrapper.addStatement(insertTile.bind(tile1));
+
+        }
 		wrapper.executeAsync(this.session);		
 	}
 
@@ -147,6 +153,21 @@ public class VehicleDao {
 		
 		return vehicleMovements;
 	}
-	
+
+    public List<String> getTiles() {
+        String cql = "select * from "+tilesTable;
+        ResultSet resultSet = session.execute(cql);
+
+        List<String> Tiles = new ArrayList<>();
+        List<Row> all = resultSet.all();
+
+        for (Row row : all){
+
+            String tile = row.getString("tile1");
+            Tiles.add(tile);
+        }
+
+        return Tiles;
+    }
 	
 }

@@ -26,7 +26,13 @@ public class TaxiService {
 		return dao.getVehiclesByTile(tile);
 		
 	}
-	
+
+    public List<String> getTiles(){
+
+        return dao.getTiles();
+
+    }
+
 	public List<Vehicle> searchVehiclesByLonLatAndDistance(int distance, LatLong latLong){
 		return dao.searchVehiclesByLonLatAndDistance(distance, latLong);
 	}

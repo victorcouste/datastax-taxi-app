@@ -19,6 +19,11 @@ create table if not exists vehicle(
 	PRIMARY KEY ((vehicle,day), date)
 ) with clustering order by (date desc);
 
+create table if not exists tiles(
+	tile1 text,
+	PRIMARY KEY (tile1)
+);
 
 truncate current_location;
 truncate vehicle;
+truncate tiles;
